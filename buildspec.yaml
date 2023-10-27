@@ -35,6 +35,12 @@ phases:
       #- docker build --tag $REPOSITORY_URI:$TAG .
   post_build:
     commands:
+      #
+      #  TODO
+      #  1/ Simplify, 2/ create 'deploy' script in repo which is open
+      #                  source-centric
+      #
+      #
       # Push Docker Image to ECR Repository
       - echo "Build completed on `date`"
       #- echo "Pushing the Docker image to ECR Repository"
@@ -66,7 +72,7 @@ phases:
       - aws eks update-kubeconfig --name $EKS_CLUSTER_NAME
       # Apply changes to our Application using kubectl
       - echo "Rolling out update to cluster ${EKS_CLUSTER_NAME} into namespace ${RETAIL_APP_NS}"
-      - kubectl -v=100 -ns "${RETAIL_APP_NS}" apply -f "dist/kubernetes/deploy.yaml"
+      - kubectl -ns "${RETAIL_APP_NS}" apply -f "dist/kubernetes/deploy.yaml"
       #- echo "Apply changes to kube manifests"            
       #- kubectl apply -f kube-manifests/
       - echo "Completed applying changes to Kubernetes Objects"           
