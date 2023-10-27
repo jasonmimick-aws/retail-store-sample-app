@@ -41,25 +41,25 @@ phases:
       #- docker push $REPOSITORY_URI:$TAG
       #- echo "Docker Image Push to ECR Completed -  $REPOSITORY_URI:$TAG"    
       # Extracting AWS Credential Information using STS Assume Role for kubectl
-      - export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output=text)
-      - echo "AWS_ACCESS_KEY_ID...     ${AWS_ACCESS_KEY_ID}"            
+      #- export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output=text)
+      #- echo "AWS_ACCESS_KEY_ID...     ${AWS_ACCESS_KEY_ID}"            
       - echo "EKS_CLUSTER_NAME...      ${EKS_CLUSTER_NAME}"
       - echo "EKS_KUBECTL_ROLE_ARN...  ${EKS_KUBECTL_ROLE_ARN}"
       - echo "RETAIL_APP_NAMESPACE...  $RETAIL_APP_NAMESPACE"
       # Additional Commands to view your credentials      
 
       - echo "Setting Environment Variables related to AWS CLI for Kube Config Setup"          
-      - export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output=text)
-      - CREDENTIALS=$(aws sts assume-role --role-arn $EKS_KUBECTL_ROLE_ARN --role-session-name codebuild-kubectl --duration-seconds 900)
-      - export AWS_ACCESS_KEY_ID="$(echo ${CREDENTIALS} | jq -r '.Credentials.AccessKeyId')"
-      - export AWS_SECRET_ACCESS_KEY="$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')"
-      - export AWS_SESSION_TOKEN="$(echo ${CREDENTIALS} | jq -r '.Credentials.SessionToken')"
-      - export AWS_EXPIRATION=$(echo ${CREDENTIALS} | jq -r '.Credentials.Expiration')
-      - echo "Credentials Value is..  ${CREDENTIALS}"      
-      - echo "AWS_ACCESS_KEY_ID...  ${AWS_ACCESS_KEY_ID}"            
-      - echo "AWS_SECRET_ACCESS_KEY...  ${AWS_SECRET_ACCESS_KEY}"            
-      - echo "AWS_SESSION_TOKEN...  ${AWS_SESSION_TOKEN}"            
-      - echo "AWS_EXPIRATION...  $AWS_EXPIRATION"             
+      #- export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output=text)
+      #- CREDENTIALS=$(aws sts assume-role --role-arn $EKS_KUBECTL_ROLE_ARN --role-session-name codebuild-kubectl --duration-seconds 900)
+      #- export AWS_ACCESS_KEY_ID="$(echo ${CREDENTIALS} | jq -r '.Credentials.AccessKeyId')"
+      #- export AWS_SECRET_ACCESS_KEY="$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')"
+      #- export AWS_SESSION_TOKEN="$(echo ${CREDENTIALS} | jq -r '.Credentials.SessionToken')"
+      #- export AWS_EXPIRATION=$(echo ${CREDENTIALS} | jq -r '.Credentials.Expiration')
+      #- echo "Credentials Value is..  ${CREDENTIALS}"      
+      #- echo "AWS_ACCESS_KEY_ID...  ${AWS_ACCESS_KEY_ID}"            
+      #- echo "AWS_SECRET_ACCESS_KEY...  ${AWS_SECRET_ACCESS_KEY}"            
+      #- echo "AWS_SESSION_TOKEN...  ${AWS_SESSION_TOKEN}"            
+      #- echo "AWS_EXPIRATION...  $AWS_EXPIRATION"             
       - echo "EKS_CLUSTER_NAME...  $EKS_CLUSTER_NAME"             
       # Setup kubectl with our EKS Cluster              
       - echo "Update Kube Config"      
