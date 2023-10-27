@@ -72,7 +72,8 @@ phases:
       - aws eks update-kubeconfig --name $EKS_CLUSTER_NAME
       # Apply changes to our Application using kubectl
       - echo "Rolling out update to cluster ${EKS_CLUSTER_NAME} into namespace ${RETAIL_APP_NS}"
-      - kubectl -ns "${RETAIL_APP_NS}" apply -f "dist/kubernetes/deploy.yaml"
+      #- kubectl -ns "${RETAIL_APP_NS}" apply -f "dist/kubernetes/deploy.yaml"
+      - kubectl --namespace "${RETAIL_APP_NS}" apply -f "dist/kubernetes/deploy.yaml"
       #- echo "Apply changes to kube manifests"            
       #- kubectl apply -f kube-manifests/
       - echo "Completed applying changes to Kubernetes Objects"           
