@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
+echo "This needs to get fixed, the node-type failed - TODO/ Find minimal cost
+deployment and maybe even build this out to _prove_ it"
 
+exit 1
 eksctl create cluster \
 	--name "${EKS_CLUSTER_NAME}" \
 	--region "${AWS_REGION}" \
