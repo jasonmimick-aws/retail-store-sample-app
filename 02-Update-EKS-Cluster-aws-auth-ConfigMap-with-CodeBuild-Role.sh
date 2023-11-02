@@ -4,7 +4,7 @@
 kubectl get configmap aws-auth -o yaml -n kube-system
 
 # Export your Account ID
-export ACCOUNT_ID=180789647333
+export ACCOUNT_ID="XXXXYYYYZZZZ"
 
 # Set ROLE value
 ROLE="    - rolearn: arn:aws:iam::$ACCOUNT_ID:role/EksCodeBuildKubectlRole\n      username: build\n      groups:\n        - system:masters"

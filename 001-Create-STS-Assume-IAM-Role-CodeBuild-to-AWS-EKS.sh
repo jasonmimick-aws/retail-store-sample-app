@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# YOU ONLY NEED THIS 1 time!!!!
 #
 # https://www.stacksimplify.com/aws-eks/aws-devops-eks/learn-to-master-devops-on-aws-eks-using-aws-codecommit-codebuild-codepipeline/
 #
