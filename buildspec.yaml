@@ -3,7 +3,7 @@ env:
   variables:
     EKS_CLUSTER_NAME: "retail-store-sample-2"
     EKS_KUBECTL_ROLE_ARN: "arn:aws:iam::347830095179:role/service-role/codebuild-retail-store-sample-app-service-role"
-    RETAIL_APP_NAMESPACE: "retail-store"
+    RETAIL_APP_NS: "retail-store"
 phases:
   build:
     commands:
