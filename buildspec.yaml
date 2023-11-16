@@ -29,7 +29,9 @@ phases:
       - echo "EKS_CLUSTER_NAME...  $EKS_CLUSTER_NAME"             
       # Setup kubectl with our EKS Cluster              
       - echo "Update Kube Config"      
-      - aws eks update-kubeconfig --name $EKS_CLUSTER_NAME
+      - aws eks update-kubeconfig --region eu-central-1 --name $EKS_CLUSTER_NAME
+      - cat ~/.kubectl/config
+      #- aws eks update-kubeconfig --name $EKS_CLUSTER_NAME
       # Apply changes to our Application using kubectl
       - echo "Rolling out update to cluster ${EKS_CLUSTER_NAME} into namespace ${RETAIL_APP_NS}"
       #- kubectl -ns "${RETAIL_APP_NS}" apply -f "dist/kubernetes/deploy.yaml"
