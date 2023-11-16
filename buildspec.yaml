@@ -24,6 +24,8 @@ phases:
       - echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
       - echo "ls\n" && ls -l
       - kubectl version --client
+      - echo "aws sts get-caller-identity"
+      - aws sts get-caller-identity 
   post_build:
     commands:
       - echo "EKS_CLUSTER_NAME...  $EKS_CLUSTER_NAME"             
