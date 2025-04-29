@@ -19,3 +19,7 @@ variable "container_image_overrides" {
   description = "Object that encapsulates any overrides to default values"
 }
 
+variable "datadog_api_key_arn" {
+  description = "ARN of the Datadog API key stored in AWS Secrets Manager"
+  type        = string
+}
