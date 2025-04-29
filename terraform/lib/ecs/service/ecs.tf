@@ -41,17 +41,32 @@ resource "aws_ecs_task_definition" "this" {
         "retries": 3,
         "timeout": 5
       },
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "${var.cloudwatch_logs_group_id}",
-          "awslogs-region": "${data.aws_region.current.name}",
-          "awslogs-stream-prefix": "${var.service_name}-service"
+      "secrets": [
+        {
+          "name": "DD_API_KEY",
+          "valueFrom": "${var.datadog_api_key_arn}"
         }
+      ],
+      "logConfiguration": {
+        "logDriver": "awsfirelens",
+        "options": {
+          "Name": "datadog",
+          "Host": "http-intake.logs.datadoghq.com",
+          "TLS": "on",
+          "dd_service": "${var.service_name}",
+          "dd_source": "fargate",
+          "dd_tags": "env:${var.environment_name}"
+        },
+        "secretOptions": [
+          {
+            "name": "apikey",
+            "valueFrom": "${var.datadog_api_key_arn}"
+          }
+        ]
       }
-    }
-  ]
+    }]
   DEFINITION
+
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "1024"
@@ -90,7 +105,6 @@ resource "aws_ecs_service" "this" {
 
   dynamic "load_balancer" {
     for_each = var.alb_target_group_arn == "" ? [] : [1]
-
     content {
       target_group_arn = var.alb_target_group_arn
       container_name   = "application"
