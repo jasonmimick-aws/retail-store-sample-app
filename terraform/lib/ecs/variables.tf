@@ -124,3 +124,8 @@ variable "mq_password" {
   type        = string
   description = "Password for the shared MQ"
 }
+
+variable "datadog_api_key_arn" {
+  description = "ARN of the Datadog API key stored in AWS Secrets Manager"
+  type        = string
+}
