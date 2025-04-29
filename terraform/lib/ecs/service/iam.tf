@@ -66,3 +66,30 @@ resource "aws_iam_policy" "ecs_exec" {
 }
 EOF
 }
+
+resource "aws_iam_policy" "datadog_secrets" {
+  name        = "${var.environment_name}-${var.service_name}-datadog-secrets"
+  path        = "/"
+  description = "Policy to access Datadog API key secret"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = [
+          var.datadog_api_key_arn
+        ]
+      }
+    ]
+  })
+}
+
+# Then attach this policy to the task execution role
+resource "aws_iam_role_policy_attachment" "task_execution_datadog" {
+  role       = aws_iam_role.task_execution_role.name
+  policy_arn = aws_iam_policy.datadog_secrets.arn
+}
