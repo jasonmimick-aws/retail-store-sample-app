@@ -80,7 +80,58 @@ variable "alb_target_group_arn" {
   type        = string
 }
 
+# Datadog Variables
+variable "enable_datadog" {
+  description = "Enable Datadog integration"
+  type        = bool
+  default     = true
+}
+
 variable "datadog_api_key_arn" {
   description = "ARN of the Datadog API key secret"
   type        = string
+}
+
+variable "datadog_agent_image" {
+  description = "Datadog agent image to use"
+  type        = string
+  default     = "public.ecr.aws/datadog/agent:latest"
+}
+
+# Logging Variables
+variable "log_group_name" {
+  description = "CloudWatch Log group name"
+  type        = string
+  default     = "/ecs/retail-store-ecs-tasks"
+}
+
+variable "cloudwatch_logs_enabled" {
+  description = "Enable CloudWatch logs"
+  type        = bool
+  default     = true
+}
+
+variable "cloudwatch_logs_region" {
+  description = "AWS region for CloudWatch logs"
+  type        = string
+  default     = "us-east-1"
+}
+
+# Container Configuration
+variable "default_container_def" {
+  description = "Default container definition configuration"
+  type        = any
+  default     = {}
+}
+
+variable "datadog_container_def" {
+  description = "Datadog container definition configuration"
+  type        = any
+  default     = null
+}
+
+variable "datadog_tags" {
+  description = "Additional tags for Datadog agent"
+  type        = map(string)
+  default     = {}
 }
