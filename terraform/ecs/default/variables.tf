@@ -23,3 +23,22 @@ variable "datadog_api_key_arn" {
   description = "ARN of the Datadog API key stored in AWS Secrets Manager"
   type        = string
 }
+
+# New variables for Datadog configuration
+variable "enable_datadog" {
+  description = "Enable Datadog integration"
+  type        = bool
+  default     = true
+}
+
+variable "datadog_agent_image" {
+  description = "Datadog agent image to use"
+  type        = string
+  default     = "public.ecr.aws/datadog/agent:latest"
+}
+
+variable "log_group_name" {
+  description = "CloudWatch Log group name"
+  type        = string
+  default     = "/ecs/retail-store-ecs-tasks"
+}
