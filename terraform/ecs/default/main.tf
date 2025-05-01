@@ -8,6 +8,11 @@ module "vpc" {
   source = "../../lib/vpc"
 
   environment_name = var.environment_name
+  
+  # Add CloudWatch Logs VPC endpoint
+  enable_vpc_endpoints = {
+    cloudwatch_logs = true
+  }
 
   tags = module.tags.result
 }
@@ -16,7 +21,7 @@ module "dependencies" {
   source = "../../lib/dependencies"
 
   environment_name = var.environment_name
-  tags             = module.tags.result
+  tags            = module.tags.result
 
   vpc_id     = module.vpc.inner.vpc_id
   subnet_ids = module.vpc.inner.private_subnets
@@ -26,15 +31,35 @@ module "dependencies" {
   checkout_security_group_id = module.retail_app_ecs.checkout_security_group_id
 }
 
+# Add CloudWatch Logs group
+resource "aws_cloudwatch_log_group" "retail_store" {
+  name              = var.log_group_name
+  retention_in_days = 30
+  tags             = module.tags.result
+}
+
 module "retail_app_ecs" {
   source = "../../lib/ecs"
 
   environment_name          = var.environment_name
-  vpc_id                    = module.vpc.inner.vpc_id
-  subnet_ids                = module.vpc.inner.private_subnets
-  public_subnet_ids         = module.vpc.inner.public_subnets
-  tags                      = module.tags.result
+  vpc_id                   = module.vpc.inner.vpc_id
+  subnet_ids               = module.vpc.inner.private_subnets
+  public_subnet_ids        = module.vpc.inner.public_subnets
+  tags                     = module.tags.result
   container_image_overrides = var.container_image_overrides
+
+  # Add Datadog configuration
+  enable_datadog      = var.enable_datadog
+  datadog_api_key_arn = var.datadog_api_key_arn
+  datadog_agent_image = var.datadog_agent_image
+  log_group_name      = aws_cloudwatch_log_group.retail_store.name
+
+  # Add CloudWatch Logs configuration
+  cloudwatch_logs_enabled = true
+  cloudwatch_logs_region  = data.aws_region.current.name
+  
+  # Add container insights
+  enable_container_insights = true
 
   catalog_db_endpoint = module.dependencies.catalog_db_endpoint
   catalog_db_port     = module.dependencies.catalog_db_port
@@ -58,3 +83,6 @@ module "retail_app_ecs" {
   mq_username = module.dependencies.mq_user
   mq_password = module.dependencies.mq_password
 }
+
+# Add data source for current AWS region
+data "aws_region" "current" {}
