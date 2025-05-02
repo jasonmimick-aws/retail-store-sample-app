@@ -13,11 +13,10 @@ module "ui_service" {
   healthcheck_path                = "/actuator/health"
   alb_target_group_arn            = element(module.alb.target_group_arns, 0)
 
-  # Merge default and service-specific environment variables
   environment_variables = merge(
     local.default_container_environment,
     {
-      RETAIL_UI_ENDPOINTS_CATALOG  = "http://${modmodule.catalog_service.ecs_service_name}"
+      RETAIL_UI_ENDPOINTS_CATALOG  = "http://${module.catalog_service.ecs_service_name}"
       RETAIL_UI_ENDPOINTS_CARTS    = "http://${module.carts_service.ecs_service_name}"
       RETAIL_UI_ENDPOINTS_CHECKOUT = "http://${module.checkout_service.ecs_service_name}"
       RETAIL_UI_ENDPOINTS_ORDERS   = "http://${module.orders_service.ecs_service_name}"
@@ -27,6 +26,12 @@ module "ui_service" {
   # Add Datadog configuration
   enable_datadog        = var.enable_datadog
   datadog_container_def = local.datadog_container_definition
+  datadog_api_key_arn   = var.datadog_api_key_arn
+  datadog_agent_image   = var.datadog_agent_image
+  datadog_tags = {
+    service = "ui"
+    env     = var.datadog_env
+  }
 
   # Add default container configuration
   default_container_def = local.default_container_definitions
@@ -35,12 +40,8 @@ module "ui_service" {
   cloudwatch_logs_enabled = var.cloudwatch_logs_enabled
   cloudwatch_logs_region  = var.cloudwatch_logs_region
   log_group_name         = var.log_group_name
-
-  # Add service-specific Datadog tags
-  datadog_tags = {
-    service = "ui"
-    env     = var.datadog_env
-  }
 }
+
+    
 
     
