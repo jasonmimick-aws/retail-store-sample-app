@@ -1,3 +1,41 @@
+module "ui" {
+  source = "../../modules/ecs-service"
+
+  name = "ui"
+
+  cluster_id = aws_ecs_cluster.this.id
+  task_definition_arn = aws_ecs_task_definition.ui.arn
+
+  desired_count = 1
+  launch_type = "FARGATE"
+
+  network_configuration = {
+    subnets = module.vpc.private_subnets
+    security_groups = [aws_security_group.alb.id]
+    assign_public_ip = false
+  }
+
+  load_balancer = {
+    target_group_arn = aws_lb_target_group.ui.arn
+    container_name = "application"
+    container_port = 8080
+  }
+
+  service_discovery = {
+    namespace_id = aws_service_discovery_private_dns_namespace.this.id
+    dns_name = "ui"
+  }
+
+  environment = {
+    RETAIL_UI_ENDPOINTS_CARTS = "http://carts.retailstore.local"
+    RETAIL_UI_ENDPOINTS_CATALOG = "http://catalog.retailstore.local"
+    RETAIL_UI_ENDPOINTS_ORDERS = "http://orders.retailstore.local"
+    RETAIL_UI_ENDPOINTS_CHECKOUT = "http://checkout.retailstore.local"
+  }
+
+  tags = local.tags
+}
+
 module "ui_service" {
   source = "./service"
 
