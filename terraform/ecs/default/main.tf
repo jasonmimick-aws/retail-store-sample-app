@@ -35,7 +35,8 @@ resource "aws_cloudwatch_log_group" "retail_store" {
     prevent_destroy = true
     ignore_changes = [
       name,
-      retention_in_days
+      retention_in_days,
+      tags
     ]
   }
 }
