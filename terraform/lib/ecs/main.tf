@@ -4,6 +4,92 @@ module "container_images" {
   container_image_overrides = var.container_image_overrides
 }
 
+# Service Discovery Services
+resource "aws_service_discovery_service" "ui" {
+  name = "ui"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.this.id
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+  }
+
+  health_check_custom_config {
+    failure_threshold = 1
+  }
+}
+
+resource "aws_service_discovery_service" "checkout" {
+  name = "checkout"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.this.id
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+  }
+
+  health_check_custom_config {
+    failure_threshold = 1
+  }
+}
+
+resource "aws_service_discovery_service" "catalog" {
+  name = "catalog"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.this.id
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+  }
+
+  health_check_custom_config {
+    failure_threshold = 1
+  }
+}
+
+resource "aws_service_discovery_service" "cart" {
+  name = "cart"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.this.id
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+  }
+
+  health_check_custom_config {
+    failure_threshold = 1
+  }
+}
+
+resource "aws_service_discovery_service" "orders" {
+  name = "orders"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.this.id
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+  }
+
+  health_check_custom_config {
+    failure_threshold = 1
+  }
+}
+
 resource "aws_ecs_service" "checkout" {
   name            = "checkout"
   cluster         = aws_ecs_cluster.cluster.id
@@ -14,6 +100,11 @@ resource "aws_ecs_service" "checkout" {
   network_configuration {
     security_groups = [aws_security_group.checkout.id]
     subnets         = var.subnet_ids
+  }
+
+  service_registries {
+    registry_arn = aws_service_discovery_service.checkout.arn
+    port         = 8080
   }
 
   tags = var.tags
@@ -31,6 +122,11 @@ resource "aws_ecs_service" "catalog" {
     subnets         = var.subnet_ids
   }
 
+  service_registries {
+    registry_arn = aws_service_discovery_service.catalog.arn
+    port         = 8080
+  }
+
   tags = var.tags
 }
 
@@ -44,6 +140,11 @@ resource "aws_ecs_service" "cart" {
   network_configuration {
     security_groups = [aws_security_group.cart.id]
     subnets         = var.subnet_ids
+  }
+
+  service_registries {
+    registry_arn = aws_service_discovery_service.cart.arn
+    port         = 8080
   }
 
   tags = var.tags
@@ -61,6 +162,11 @@ resource "aws_ecs_service" "orders" {
     subnets         = var.subnet_ids
   }
 
+  service_registries {
+    registry_arn = aws_service_discovery_service.orders.arn
+    port         = 8080
+  }
+
   tags = var.tags
 }
 
@@ -74,6 +180,11 @@ resource "aws_ecs_service" "ui" {
   network_configuration {
     security_groups = [aws_security_group.ui.id]
     subnets         = var.subnet_ids
+  }
+
+  service_registries {
+    registry_arn = aws_service_discovery_service.ui.arn
+    port         = 8080
   }
 
   load_balancer {
