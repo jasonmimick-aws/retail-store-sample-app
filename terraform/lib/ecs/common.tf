@@ -134,22 +134,24 @@ locals {
 
 # Default container environment variables
 locals {
-  default_container_environment = [
-    {
+  default_container_environment = {
+    DD_AGENT_HOST = {
       name  = "DD_AGENT_HOST"
       value = var.enable_datadog ? "localhost" : ""
-    },
-    {
+    }
+    DD_TRACE_AGENT_PORT = {
       name  = "DD_TRACE_AGENT_PORT"
       value = "8126"
-    },
-    {
+    }
+    DD_ENV = {
       name  = "DD_ENV"
       value = var.datadog_env
-    },
-    {
+    }
+    DD_SERVICE = {
       name  = "DD_SERVICE"
       value = var.environment_name
     }
-  ]
+  }
 }
+
+    
