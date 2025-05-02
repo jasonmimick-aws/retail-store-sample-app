@@ -79,3 +79,9 @@ variable "account_id" {
   type        = string
   default     = "607221907875"
 }
+
+variable "service_name" {
+  description = "Name of the service for Datadog monitoring"
+  type        = string
+  default     = "retail-store-ecs" 
+
