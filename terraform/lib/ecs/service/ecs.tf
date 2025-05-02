@@ -85,8 +85,8 @@ resource "aws_ecs_task_definition" "this" {
         essential = true
         networkMode = "awsvpc"
         readonlyRootFilesystem = false
-        environment = var.environment_variables # Remove the transformation here
-        secrets    = var.secrets # Remove the transformation here
+        environment = var.environment_variables
+        secrets    = var.secrets
         cpu       = 0
         mountPoints = []
         volumesFrom = []
