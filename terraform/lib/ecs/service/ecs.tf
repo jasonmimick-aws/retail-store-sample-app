@@ -131,7 +131,7 @@ resource "aws_ecs_task_definition" "this" {
           options = {
             "awslogs-group"         = var.log_group_name
             "awslogs-region"        = data.aws_region.current.name
-            "awslogs-stream-prefix" = var.service_name
+            "a "awslogs-stream-prefix" = var.service_name
           }
         }
         dependsOn = var.enable_datadog ? [
@@ -151,6 +151,10 @@ resource "aws_ecs_task_definition" "this" {
   memory                  = "2048"
   execution_role_arn      = aws_iam_role.task_execution_role.arn
   task_role_arn           = aws_iam_role.task_role.arn
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   tags = var.tags
 }
@@ -192,6 +196,20 @@ resource "aws_ecs_service" "this" {
     }
   }
 
+  # Add lifecycle block to prevent conflicts with existing services
+  lifecycle {
+    ignore_changes = [
+      task_definition,
+      load_balancer,
+      network_configuration,
+      service_connect_configuration,
+      desired_count,
+      force_new_deployment
+    ]
+  }
+
+  depends_on = [aws_iam_role.task_execution_role, aws_iam_role.task_role]
   tags = var.tags
 }
+
 
