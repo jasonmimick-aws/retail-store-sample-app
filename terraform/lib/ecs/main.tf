@@ -4,25 +4,6 @@ module "container_images" {
   container_image_overrides = var.container_image_overrides
 }
 
-# Create the cluster
-resource "aws_ecs_cluster" "cluster" {
-  name = "retail-store-ecs-cluster"
-
-  setting {
-    name  = "containerInsights"
-    value = var.enable_container_insights ? "enabled" : "disabled"
-  }
-
-  tags = var.tags
-}
-
-# Service discovery namespace for internal communication
-resource "aws_service_discovery_private_dns_namespace" "this" {
-  name        = "retail.internal"
-  description = "Service discovery namespace for retail store services"
-  vpc         = var.vpc_id
-}
-
 resource "aws_ecs_service" "checkout" {
   name            = "checkout"
   cluster         = aws_ecs_cluster.cluster.id
