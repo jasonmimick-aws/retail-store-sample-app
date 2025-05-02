@@ -30,6 +30,14 @@ resource "aws_cloudwatch_log_group" "retail_store" {
   name              = var.log_group_name
   retention_in_days = 30
   tags              = var.tags
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = [
+      name,
+      retention_in_days
+    ]
+  }
 }
 
 # Datadog container definition
@@ -38,6 +46,15 @@ locals {
     name      = "datadog-agent"
     image     = var.datadog_agent_image
     essential = true
+
+    # Add health check
+    healthCheck = {
+      command     = ["CMD-SHELL", "/probe.sh"]
+      interval    = 30
+      timeout     = 5
+      retries     = 3
+      startPeriod = 60
+    }
 
     secrets = [
       {
@@ -78,6 +95,10 @@ locals {
       {
         name  = "DD_SERVICE"
         value = var.environment_name
+      },
+      {
+        name  = "DD_HEALTH_PORT"
+        value = "5555"
       }
     ]
 
@@ -154,4 +175,3 @@ locals {
   }
 }
 
-    
