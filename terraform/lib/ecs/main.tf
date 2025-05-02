@@ -1,77 +1,98 @@
+
 module "container_images" {
   source = "../images"
 
   container_image_overrides = var.container_image_overrides
 }
 
-locals {
-  datadog_container_definition = var.enable_datadog ? {
-    name      = "datadog-agent"
-    image     = var.datadog_agent_image
-    essential = true
-    environment = [
-      { name = "DD_APM_ENABLED", value = "true" },
-      { name = "DD_LOGS_ENABLED", value = "true" },
-      { name = "DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL", value = "true" },
-      { name = "DD_CONTAINER_EXCLUDE", value = "name:datadog-agent" },
-      { name = "ECS_FARGATE", value = "true" },
-      { name = "DD_SITE", value = "datadoghq.com" },
-      { name = "DD_APM_NON_LOCAL_TRAFFIC", value = "true" },
-      { name = "DD_ECS_TASK_COLLECTION_ENABLED", value = "true" },
-      { name = "DD_ECS_COLLECT_RESOURCE_TAGS_EC2", value = "true" },
-      { name = "DD_TAGS", value = "env:${var.environment_name}" }
-    ]
-    secrets = [
-      {
-        name      = "DD_API_KEY"
-        valueFrom = var.datadog_api_key_arn
-      }
-    ]
-    logConfiguration = {
-      logDriver = "awslogs"
-      options = {
-        "awslogs-group"         = var.log_group_name
-        "awslogs-region"        = var.cloudwatch_logs_region
-        "awslogs-stream-prefix" = "dd"
-        "mode"                  = "non-blocking"
-      }
-    }
-  } : null
+resource "aws_ecs_cluster" "main" {
+  name = "retail-store-ecs-cluster"
+
+  setting {
+    name  = "containerInsights"
+    value = var.enable_container_insights ? "enabled" : "disabled"
+  }
+
+  tags = var.tags
 }
 
-# Add variables for the ECS module
-variable "enable_datadog" {
-  description = "Enable Datadog integration"
-  type        = bool
-  default     = false
+resource "aws_ecs_service" "checkout" {
+  name            = "checkout"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.checkout.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    security_groups = [aws_security_group.checkout.id]
+    subnets         = var.subnet_ids
+  }
+
+  tags = var.tags
 }
 
-variable "datadog_api_key_arn" {
-  description = "ARN of the Datadog API key secret in Secrets Manager"
-  type        = string
-  default     = ""
+resource "aws_ecs_service" "catalog" {
+  name            = "catalog"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.catalog.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    security_groups = [aws_security_group.catalog.id]
+    subnets         = var.subnet_ids
+  }
+
+  tags = var.tags
 }
 
-variable "datadog_agent_image" {
-  description = "Datadog Agent container image"
-  type        = string
-  default     = "public.ecr.aws/datadog/agent:latest"
+resource "aws_ecs_service" "cart" {
+  name            = "cart"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.cart.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    security_groups = [aws_security_group.cart.id]
+    subnets         = var.subnet_ids
+  }
+
+  tags = var.tags
 }
 
-variable "environment_name" {
-  description = "Environment name"
-  type        = string
+resource "aws_ecs_service" "orders" {
+  name            = "orders"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.orders.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    security_groups = [aws_security_group.orders.id]
+    subnets         = var.subnet_ids
+  }
+
+  tags = var.tags
 }
 
-variable "cloudwatch_logs_region" {
-  description = "AWS region for CloudWatch Logs"
-  type        = string
-}
+resource "aws_ecs_service" "ui" {
+  name            = "ui"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.ui.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
 
-variable "log_group_name" {
-  description = "CloudWatch Log Group name"
-  type        = string
-}
+  network_configuration {
+    security_groups = [aws_security_group.ui.id]
+    subnets         = var.subnet_ids
+  }
 
-# Add your existing container definitions and task definitions here
-# Make sure to include the Datadog container when enabled
+  load_balancer {
+    target_group_arn = aws_lb_target_group.ui.arn
+    container_name   = "application"
+    container_port   = 8080
+  }
+
+  tags = var.tags
+}
