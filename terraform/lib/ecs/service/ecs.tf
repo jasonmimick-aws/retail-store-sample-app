@@ -64,6 +64,10 @@ locals {
       {
         name  = "DD_HEALTH_PORT"
         value = "5555"
+      },
+      {
+        name  = "DD_ECS_TASK_COLLECTION_ENABLED"
+        value = "true"
       }
     ]
 
