@@ -17,7 +17,7 @@ resource "aws_secretsmanager_secret_version" "mq" {
 
   secret_string = jsonencode(
     {
-      username = var.mq_username
+      username = "admin"
       password = var.mq_password
       host     = var.mq_endpoint
     }
@@ -94,11 +94,23 @@ locals {
       },
       {
         name  = "DD_SERVICE"
-        value = var.environment_name
+        value = var.service_name
+      },
+      {
+        name  = "DD_ECS_TASK_COLLECTION_ENABLED"
+        value = "true"
       },
       {
         name  = "DD_HEALTH_PORT"
         value = "5555"
+      },
+      {
+        name  = "DD_CONTAINER_EXCLUDE"
+        value = "name:datadog-agent"
+      },
+      {
+        name  = "DD_AGENT_HOST"
+        value = "localhost"
       }
     ]
 
@@ -170,8 +182,9 @@ locals {
     }
     DD_SERVICE = {
       name  = "DD_SERVICE"
-      value = var.environment_name
+      value = var.service_name
     }
   }
 }
+
 
