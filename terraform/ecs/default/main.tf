@@ -8,12 +8,6 @@ module "vpc" {
   source = "../../lib/vpc"
 
   environment_name = var.environment_name
-  
-  # Add CloudWatch Logs VPC endpoint
-  enable_vpc_endpoints = {
-    cloudwatch_logs = true
-  }
-
   tags = module.tags.result
 }
 
