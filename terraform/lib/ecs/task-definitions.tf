@@ -11,7 +11,7 @@ resource "aws_ecs_task_definition" "checkout" {
     [
       {
         name      = "application"
-        image     = module.container_images.checkout
+        image     = module.container_images.result.checkout.url
         essential = true
         logConfiguration = {
           logDriver = "awslogs"
@@ -52,7 +52,7 @@ resource "aws_ecs_task_definition" "catalog" {
     [
       {
         name      = "application"
-        image     = module.container_images.catalog
+        image     = module.container_images.result.catalog.url
         essential = true
         logConfiguration = {
           logDriver = "awslogs"
@@ -101,7 +101,7 @@ resource "aws_ecs_task_definition" "cart" {
     [
       {
         name      = "application"
-        image     = module.container_images.cart
+        image     = module.container_images.result.cart.url
         essential = true
         logConfiguration = {
           logDriver = "awslogs"
@@ -142,7 +142,7 @@ resource "aws_ecs_task_definition" "orders" {
     [
       {
         name      = "application"
-        image     = module.container_images.orders
+        image     = module.container_images.result.orders.url
         essential = true
         logConfiguration = {
           logDriver = "awslogs"
@@ -195,7 +195,7 @@ resource "aws_ecs_task_definition" "ui" {
     [
       {
         name      = "application"
-        image     = module.container_images.ui
+        image     = module.container_images.result.ui.url
         essential = true
         logConfiguration = {
           logDriver = "awslogs"
