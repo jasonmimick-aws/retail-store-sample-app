@@ -20,6 +20,15 @@ locals {
     image     = var.datadog_agent_image
     essential = true
 
+    # Add health check configuration
+    healthCheck = {
+      command     = ["CMD-SHELL", "/probe.sh"]
+      interval    = 30
+      timeout     = 5
+      retries     = 3
+      startPeriod = 60
+    }
+
     environment = [
       {
         name  = "DD_SITE"
@@ -52,6 +61,10 @@ locals {
       {
         name  = "DD_ENV"
         value = var.environment_name
+      },
+      {
+        name  = "DD_HEALTH_PORT"
+        value = "5555"
       }
     ]
 
@@ -81,8 +94,6 @@ locals {
   } : null
 }
 
-
-
 data "aws_region" "current" {}
 
 resource "aws_ecs_task_definition" "this" {
@@ -110,7 +121,7 @@ resource "aws_ecs_task_definition" "this" {
         volumesFrom = []
         healthCheck = {
           command     = ["CMD-SHELL", "curl -f http://localhost:8080${var.healthcheck_path} || exit 1"]
-          interval    = 10
+          interval    = 30
           startPeriod = 60
           retries     = 3
           timeout     = 5
@@ -183,3 +194,4 @@ resource "aws_ecs_service" "this" {
 
   tags = var.tags
 }
+
