@@ -59,7 +59,7 @@ locals {
       },
       {
         name  = "DD_ENV"
-        value = var.environment_name
+        value = var.datadog_env
       },
       {
         name  = "DD_HEALTH_PORT"
@@ -184,7 +184,7 @@ resource "aws_ecs_service" "this" {
     service {
       client_alias {
         dns_name = var.service_name
-        port     = "80"
+        port     = "8080"
       }
       discovery_name = var.service_name
       port_name      = "application"
