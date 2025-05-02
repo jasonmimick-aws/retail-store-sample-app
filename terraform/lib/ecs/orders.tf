@@ -39,10 +39,6 @@ module "orders_service" {
   datadog_container_def = local.datadog_container_definition
   datadog_api_key_arn   = var.datadog_api_key_arn
   datadog_agent_image   = var.datadog_agent_image
-  datadog_tags = {
-    service = "orders"
-    env     = var.datadog_env
-  }
 
   # Add default container configuration
   default_container_def = local.default_container_definitions
@@ -51,14 +47,6 @@ module "orders_service" {
   cloudwatch_logs_enabled = var.cloudwatch_logs_enabled
   cloudwatch_logs_region  = var.cloudwatch_logs_region
   log_group_name         = var.log_group_name
-}
-
-
-  # Add service-specific Datadog tags
-  datadog_tags = {
-    service = "orders"
-    env     = var.datadog_env
-  }
 }
 
 data "aws_iam_policy_document" "orders_db_secret" {
@@ -105,3 +93,4 @@ resource "aws_secretsmanager_secret_version" "orders_db" {
     }
   )
 }
+
