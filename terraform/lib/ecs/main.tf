@@ -35,7 +35,7 @@ resource "aws_service_discovery_service" "checkout" {
   }
 
   health_check_custom_config {
-    failure_threshold = 1
+    failure_te_threshold = 1
   }
 }
 
@@ -98,13 +98,12 @@ resource "aws_ecs_service" "checkout" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    security_groups = [aws_security_group.checkout.id]
+       security_groups = [aws_security_group.checkout.id]
     subnets         = var.subnet_ids
   }
 
   service_registries {
     registry_arn = aws_service_discovery_service.checkout.arn
-    port         = 8080
   }
 
   tags = var.tags
@@ -124,7 +123,6 @@ resource "aws_ecs_service" "catalog" {
 
   service_registries {
     registry_arn = aws_service_discovery_service.catalog.arn
-    port         = 8080
   }
 
   tags = var.tags
@@ -144,7 +142,6 @@ resource "aws_ecs_service" "cart" {
 
   service_registries {
     registry_arn = aws_service_discovery_service.cart.arn
-    port         = 8080
   }
 
   tags = var.tags
@@ -164,7 +161,6 @@ resource "aws_ecs_service" "orders" {
 
   service_registries {
     registry_arn = aws_service_discovery_service.orders.arn
-    port         = 8080
   }
 
   tags = var.tags
@@ -184,7 +180,6 @@ resource "aws_ecs_service" "ui" {
 
   service_registries {
     registry_arn = aws_service_discovery_service.ui.arn
-    port         = 8080
   }
 
   load_balancer {
