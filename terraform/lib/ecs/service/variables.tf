@@ -135,3 +135,9 @@ variable "datadog_tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "datadog_env" {
+  description = "Environment tag for Datadog agent"
+  type        = string
+  default     = "prod"
+}
