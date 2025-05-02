@@ -1,5 +1,4 @@
-
-  # Datadog container definition
+locals {
   datadog_container = var.enable_datadog ? {
     name      = "datadog-agent"
     image     = var.datadog_agent_image
