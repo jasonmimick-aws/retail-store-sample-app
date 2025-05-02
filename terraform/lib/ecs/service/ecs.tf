@@ -1,13 +1,13 @@
 locals {
   # Environment and secrets transformation
-  environment_list = [
+  environment_list = var.environment_variables == null ? [] : [
     for k, v in var.environment_variables : {
       name  = k
-      value = tostring(v)
+      value = try(tostring(v), v.value, "")
     }
   ]
 
-  secrets_list = [
+  secrets_list = var.secrets == null ? [] : [
     for k, v in var.secrets : {
       name      = k
       valueFrom = v
@@ -80,6 +80,7 @@ locals {
     }
   } : null
 }
+
 
 data "aws_region" "current" {}
 
