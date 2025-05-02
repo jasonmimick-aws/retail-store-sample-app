@@ -11,7 +11,6 @@ module "catalog_service" {
   service_discovery_namespace_arn = aws_service_discovery_private_dns_namespace.this.arn
   cloudwatch_logs_group_id        = var.cloudwatch_logs_enabled ? aws_cloudwatch_log_group.retail_store[0].id : null
 
-  # Merge default and service-specific environment variables
   environment_variables = merge(
     local.default_container_environment,
     {
@@ -33,6 +32,12 @@ module "catalog_service" {
   # Add Datadog configuration
   enable_datadog        = var.enable_datadog
   datadog_container_def = local.datadog_container_definition
+  datadog_api_key_arn   = var.datadog_api_key_arn
+  datadog_agent_image   = var.datadog_agent_image
+  datadog_tags = {
+    service = "catalog"
+    env     = var.datadog_env
+  }
 
   # Add default container configuration
   default_container_def = local.default_container_definitions
