@@ -1,11 +1,11 @@
-
 module "container_images" {
   source = "../images"
 
   container_image_overrides = var.container_image_overrides
 }
 
-resource "aws_ecs_cluster" "main" {
+# Create the cluster
+resource "aws_ecs_cluster" "cluster" {
   name = "retail-store-ecs-cluster"
 
   setting {
@@ -16,9 +16,16 @@ resource "aws_ecs_cluster" "main" {
   tags = var.tags
 }
 
+# Service discovery namespace for internal communication
+resource "aws_service_discovery_private_dns_namespace" "this" {
+  name        = "retail.internal"
+  description = "Service discovery namespace for retail store services"
+  vpc         = var.vpc_id
+}
+
 resource "aws_ecs_service" "checkout" {
   name            = "checkout"
-  cluster         = aws_ecs_cluster.main.id
+  cluster         = aws_ecs_cluster.cluster.id
   task_definition = aws_ecs_task_definition.checkout.arn
   desired_count   = 1
   launch_type     = "FARGATE"
@@ -33,7 +40,7 @@ resource "aws_ecs_service" "checkout" {
 
 resource "aws_ecs_service" "catalog" {
   name            = "catalog"
-  cluster         = aws_ecs_cluster.main.id
+  cluster         = aws_ecs_cluster.cluster.id
   task_definition = aws_ecs_task_definition.catalog.arn
   desired_count   = 1
   launch_type     = "FARGATE"
@@ -48,7 +55,7 @@ resource "aws_ecs_service" "catalog" {
 
 resource "aws_ecs_service" "cart" {
   name            = "cart"
-  cluster         = aws_ecs_cluster.main.id
+  cluster         = aws_ecs_cluster.cluster.id
   task_definition = aws_ecs_task_definition.cart.arn
   desired_count   = 1
   launch_type     = "FARGATE"
@@ -63,7 +70,7 @@ resource "aws_ecs_service" "cart" {
 
 resource "aws_ecs_service" "orders" {
   name            = "orders"
-  cluster         = aws_ecs_cluster.main.id
+  cluster         = aws_ecs_cluster.cluster.id
   task_definition = aws_ecs_task_definition.orders.arn
   desired_count   = 1
   launch_type     = "FARGATE"
@@ -78,7 +85,7 @@ resource "aws_ecs_service" "orders" {
 
 resource "aws_ecs_service" "ui" {
   name            = "ui"
-  cluster         = aws_ecs_cluster.main.id
+  cluster         = aws_ecs_cluster.cluster.id
   task_definition = aws_ecs_task_definition.ui.arn
   desired_count   = 1
   launch_type     = "FARGATE"
@@ -89,7 +96,7 @@ resource "aws_ecs_service" "ui" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.ui.arn
+    target_group_arn = module.alb.target_group_arns[0]
     container_name   = "application"
     container_port   = 8080
   }
