@@ -1,13 +1,3 @@
-locals {
-  environment = jsonencode([for k, v in var.environment_variables : {
-    "name" : k,
-    "value" : v
-  }])
-
-  secrets = jsonencode([for k, v in var.secrets : {
-    "name" : k,
-    "valueFrom" : v
-  }])
 
   # Datadog container definition
   datadog_container = var.enable_datadog ? {
@@ -96,8 +86,14 @@ resource "aws_ecs_task_definition" "this" {
         essential = true
         networkMode = "awsvpc"
         readonlyRootFilesystem = false
-        environment = jsondecode(local.environment)
-        secrets    = jsondecode(local.secrets)
+        environment = [for k, v in var.environment_variables : {
+          name  = k
+          value = tostring(v)
+        }]
+        secrets    = [for k, v in var.secrets : {
+          name      = k
+          valueFrom = v
+        }]
         cpu       = 0
         mountPoints = []
         volumesFrom = []
