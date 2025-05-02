@@ -75,3 +75,14 @@ variable "datadog_env" {
   default     = "prod"
 }
 
+variable "account_id" {
+  description = "AWS Account ID"
+  type        = string
+}
+
+variable "datadog_api_key" {
+  description = "Datadog API Key"
+  type        = string
+  sensitive   = true
+}
+
