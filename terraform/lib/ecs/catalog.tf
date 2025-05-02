@@ -14,20 +14,9 @@ module "catalog_service" {
   environment_variables = merge(
     local.default_container_environment,
     {
-      RETAIL_CATALOG_PERSISTENCE_PROVIDER = "mysql"
-      RETAIL_CATALOG_PERSISTENCE_DB_NAME  = var.catalog_db_name
+      RETAIL_CATALOG_PERSISTENCE_PROVIDER = "memory"
     }
   )
-
-  secrets = {
-    RETAIL_CATALOG_PERSISTENCE_ENDPOINT = "${aws_secretsmanager_secret_version.catalog_db.arn}:host::"
-    RETAIL_CATALOG_PERSISTENCE_USER     = "${aws_secretsmanager_secret_version.catalog_db.arn}:username::"
-    RETAIL_CATALOG_PERSISTENCE_PASSWORD = "${aws_secretsmanager_secret_version.catalog_db.arn}:password::"
-  }
-
-  additional_task_execution_role_iam_policy_arns = [
-    aws_iam_policy.catalog_policy.arn
-  ]
 
   # Add Datadog configuration
   enable_datadog        = var.enable_datadog
