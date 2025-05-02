@@ -20,7 +20,6 @@ locals {
     image     = var.datadog_agent_image
     essential = true
 
-    # Add health check configuration
     healthCheck = {
       command     = ["CMD-SHELL", "/probe.sh"]
       interval    = 30
@@ -131,7 +130,7 @@ resource "aws_ecs_task_definition" "this" {
           options = {
             "awslogs-group"         = var.log_group_name
             "awslogs-region"        = data.aws_region.current.name
-            "a "awslogs-stream-prefix" = var.service_name
+            "awslogs-stream-prefix" = var.service_name
           }
         }
         dependsOn = var.enable_datadog ? [
@@ -196,7 +195,6 @@ resource "aws_ecs_service" "this" {
     }
   }
 
-  # Add lifecycle block to prevent conflicts with existing services
   lifecycle {
     ignore_changes = [
       task_definition,
@@ -211,5 +209,3 @@ resource "aws_ecs_service" "this" {
   depends_on = [aws_iam_role.task_execution_role, aws_iam_role.task_role]
   tags = var.tags
 }
-
-
