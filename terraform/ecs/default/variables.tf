@@ -23,7 +23,6 @@ variable "container_image_overrides" {
 variable "datadog_api_key_arn" {
   description = "ARN of the Datadog API key stored in AWS Secrets Manager"
   type        = string
-  default     = "arn:aws:secretsmanager:us-east-1:607221907875:secret:DD-API_KEY"
 }
 
 variable "enable_datadog" {
@@ -74,15 +73,3 @@ variable "datadog_env" {
   type        = string
   default     = "prod"
 }
-
-variable "account_id" {
-  description = "AWS Account ID"
-  type        = string
-}
-
-variable "datadog_api_key" {
-  description = "Datadog API Key"
-  type        = string
-  sensitive   = true
-}
-
