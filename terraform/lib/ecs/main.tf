@@ -111,15 +111,18 @@ resource "aws_service_discovery_service" "orders" {
 }
 
 resource "aws_ecs_service" "checkout" {
-  name            = "checkout"
-  cluster         = aws_ecs_cluster.cluster.id
-  task_definition = aws_ecs_task_definition.checkout.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
+  name                   = "checkout"
+  cluster               = aws_ecs_cluster.cluster.id
+  task_definition       = aws_ecs_task_definition.checkout.arn
+  desired_count         = 1
+  launch_type           = "FARGATE"
+  wait_for_steady_state = false
+  force_new_deployment  = false
 
   network_configuration {
-    security_groups = [aws_security_group.checkout.id]
+    security_groups  = [aws_security_group.checkout.id]
     subnets         = var.subnet_ids
+    assign_public_ip = false
   }
 
   service_registries {
@@ -130,7 +133,13 @@ resource "aws_ecs_service" "checkout" {
     create_before_destroy = true
     ignore_changes = [
       task_definition,
-      desired_count
+      desired_count,
+      load_balancer,
+      network_configuration,
+      platform_version,
+      force_new_deployment,
+      service_registries,
+      wait_for_steady_state
     ]
   }
 
@@ -138,15 +147,18 @@ resource "aws_ecs_service" "checkout" {
 }
 
 resource "aws_ecs_service" "catalog" {
-  name            = "catalog"
-  cluster         = aws_ecs_cluster.cluster.id
-  task_definition = aws_ecs_task_definition.catalog.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
+  name                   = "catalog"
+  cluster               = aws_ecs_cluster.cluster.id
+  task_definition       = aws_ecs_task_definition.catalog.arn
+  desired_count         = 1
+  launch_type           = "FARGATE"
+  wait_for_steady_state = false
+  force_new_deployment  = false
 
   network_configuration {
-    security_groups = [aws_security_group.catalog.id]
+    security_groups  = [aws_security_group.catalog.id]
     subnets         = var.subnet_ids
+    assign_public_ip = false
   }
 
   service_registries {
@@ -157,7 +169,13 @@ resource "aws_ecs_service" "catalog" {
     create_before_destroy = true
     ignore_changes = [
       task_definition,
-      desired_count
+      desired_count,
+      load_balancer,
+      network_configuration,
+      platform_version,
+      force_new_deployment,
+      service_registries,
+      wait_for_steady_state
     ]
   }
 
@@ -165,15 +183,18 @@ resource "aws_ecs_service" "catalog" {
 }
 
 resource "aws_ecs_service" "cart" {
-  name            = "cart"
-  cluster         = aws_ecs_cluster.cluster.id
-  task_definition = aws_ecs_task_definition.cart.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
+  name                   = "cart"
+  cluster               = aws_ecs_cluster.cluster.id
+  task_definition       = aws_ecs_task_definition.cart.arn
+  desired_count         = 1
+  launch_type           = "FARGATE"
+  wait_for_steady_state = false
+  force_new_deployment  = false
 
   network_configuration {
-    security_groups = [aws_security_group.cart.id]
+    security_groups  = [aws_security_group.cart.id]
     subnets         = var.subnet_ids
+    assign_public_ip = false
   }
 
   service_registries {
@@ -184,7 +205,13 @@ resource "aws_ecs_service" "cart" {
     create_before_destroy = true
     ignore_changes = [
       task_definition,
-      desired_count
+      desired_count,
+      load_balancer,
+      network_configuration,
+      platform_version,
+      force_new_deployment,
+      service_registries,
+      wait_for_steady_state
     ]
   }
 
@@ -192,15 +219,18 @@ resource "aws_ecs_service" "cart" {
 }
 
 resource "aws_ecs_service" "orders" {
-  name            = "orders"
-  cluster         = aws_ecs_cluster.cluster.id
-  task_definition = aws_ecs_task_definition.orders.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
+  name                   = "orders"
+  cluster               = aws_ecs_cluster.cluster.id
+  task_definition       = aws_ecs_task_definition.orders.arn
+  desired_count         = 1
+  launch_type           = "FARGATE"
+  wait_for_steady_state = false
+  force_new_deployment  = false
 
   network_configuration {
-    security_groups = [aws_security_group.orders.id]
+    security_groups  = [aws_security_group.orders.id]
     subnets         = var.subnet_ids
+    assign_public_ip = false
   }
 
   service_registries {
@@ -211,7 +241,13 @@ resource "aws_ecs_service" "orders" {
     create_before_destroy = true
     ignore_changes = [
       task_definition,
-      desired_count
+      desired_count,
+      load_balancer,
+      network_configuration,
+      platform_version,
+      force_new_deployment,
+      service_registries,
+      wait_for_steady_state
     ]
   }
 
@@ -219,15 +255,18 @@ resource "aws_ecs_service" "orders" {
 }
 
 resource "aws_ecs_service" "ui" {
-  name            = "ui"
-  cluster         = aws_ecs_cluster.cluster.id
-  task_definition = aws_ecs_task_definition.ui.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
+  name                   = "ui"
+  cluster               = aws_ecs_cluster.cluster.id
+  task_definition       = aws_ecs_task_definition.ui.arn
+  desired_count         = 1
+  launch_type           = "FARGATE"
+  wait_for_steady_state = false
+  force_new_deployment  = false
 
   network_configuration {
-    security_groups = [aws_security_group.ui.id]
+    security_groups  = [aws_security_group.ui.id]
     subnets         = var.subnet_ids
+    assign_public_ip = false
   }
 
   service_registries {
@@ -244,7 +283,13 @@ resource "aws_ecs_service" "ui" {
     create_before_destroy = true
     ignore_changes = [
       task_definition,
-      desired_count
+      desired_count,
+      load_balancer,
+      network_configuration,
+      platform_version,
+      force_new_deployment,
+      service_registries,
+      wait_for_steady_state
     ]
   }
 
