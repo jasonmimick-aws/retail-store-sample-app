@@ -30,6 +30,14 @@ resource "aws_cloudwatch_log_group" "retail_store" {
   name              = var.log_group_name
   retention_in_days = 30
   tags             = module.tags.result
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = [
+      name,
+      retention_in_days
+    ]
+  }
 }
 
 module "retail_app_ecs" {
