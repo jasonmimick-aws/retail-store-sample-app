@@ -64,7 +64,7 @@ resource "aws_service_discovery_service" "catalog" {
   }
 
   lifecycle {
-    create_before_re_destroy = true
+    create_before_destroy = true
   }
 }
 
