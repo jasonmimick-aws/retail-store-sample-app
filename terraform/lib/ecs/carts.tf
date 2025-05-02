@@ -12,7 +12,6 @@ module "carts_service" {
   cloudwatch_logs_group_id        = var.cloudwatch_logs_enabled ? aws_cloudwatch_log_group.retail_store[0].id : null
   healthcheck_path                = "/actuator/health"
 
-  # Merge default and service-specific environment variables
   environment_variables = merge(
     local.default_container_environment,
     {
@@ -28,14 +27,18 @@ module "carts_service" {
   # Add Datadog configuration
   enable_datadog        = var.enable_datadog
   datadog_container_def = local.datadog_container_definition
-  datadog_api_key_arn   = var.datadog_api_key_arn  # Add this line
+  datadog_api_key_arn   = var.datadog_api_key_arn
   datadog_agent_image   = var.datadog_agent_image
+  datadog_tags = {
+    service = "carts"
+    env     = var.datadog_env
+  }
 
   # Add default container configuration
   default_container_def = local.default_container_definitions
 
   # Add CloudWatch Logs configuration
-  cloudwatch_logs_enaenabled = var.cloudwatch_logs_enabled
+  cloudwatch_logs_enabled = var.cloudwatch_logs_enabled
   cloudwatch_logs_region  = var.cloudwatch_logs_region
-  log_group_name          = var.log_group_name
+  log_group_name         = var.log_group_name
 }
