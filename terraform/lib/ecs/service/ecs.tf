@@ -165,7 +165,8 @@ resource "aws_ecs_service" "this" {
   desired_count         = 1
   launch_type           = "FARGATE"
   enable_execute_command = true
-  wait_for_steady_state = true
+  wait_for_steady_state = false
+  force_new_deployment = false
 
   network_configuration {
     security_groups  = [aws_security_group.this.id]
@@ -203,6 +204,8 @@ resource "aws_ecs_service" "this" {
       service_connect_configuration,
       desired_count,
       force_new_deployment
+      wait_for_steady_state, 
+      platform_version
     ]
   }
 
