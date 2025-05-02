@@ -19,12 +19,13 @@ variable "container_image_overrides" {
   description = "Object that encapsulates any overrides to default values"
 }
 
+# Datadog Configuration
 variable "datadog_api_key_arn" {
   description = "ARN of the Datadog API key stored in AWS Secrets Manager"
   type        = string
+  default     = "arn:aws:secretsmanager:us-east-1:607221907875:secret:DD-API_KEY"
 }
 
-# New variables for Datadog configuration
 variable "enable_datadog" {
   description = "Enable Datadog integration"
   type        = bool
@@ -42,3 +43,35 @@ variable "log_group_name" {
   type        = string
   default     = "/ecs/retail-store-ecs-tasks"
 }
+
+# Additional Datadog and Logging Configuration
+variable "cloudwatch_logs_enabled" {
+  description = "Enable CloudWatch logs"
+  type        = bool
+  default     = true
+}
+
+variable "cloudwatch_logs_region" {
+  description = "AWS region for CloudWatch logs"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "enable_container_insights" {
+  description = "Enable CloudWatch Container Insights"
+  type        = bool
+  default     = true
+}
+
+variable "datadog_tags" {
+  description = "Additional tags for Datadog agent"
+  type        = map(string)
+  default     = {}
+}
+
+variable "datadog_env" {
+  description = "Environment tag for Datadog agent"
+  type        = string
+  default     = "prod"
+}
+
