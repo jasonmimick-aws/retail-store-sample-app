@@ -28,12 +28,14 @@ module "carts_service" {
   # Add Datadog configuration
   enable_datadog        = var.enable_datadog
   datadog_container_def = local.datadog_container_definition
+  datadog_api_key_arn   = var.datadog_api_key_arn  # Add this line
+  datadog_agent_image   = var.datadog_agent_image
 
   # Add default container configuration
   default_container_def = local.default_container_definitions
 
   # Add CloudWatch Logs configuration
-  cloudwatch_logs_enabled = var.cloudwatch_logs_enabled
+  cloudwatch_logs_enaenabled = var.cloudwatch_logs_enabled
   cloudwatch_logs_region  = var.cloudwatch_logs_region
   log_group_name          = var.log_group_name
 }
