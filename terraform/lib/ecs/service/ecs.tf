@@ -207,7 +207,7 @@ resource "aws_ecs_service" "this" {
       network_configuration,
       service_connect_configuration,
       desired_count,
-      force_new_deployment
+      force_new_deployment,
       wait_for_steady_state, 
       platform_version
     ]
