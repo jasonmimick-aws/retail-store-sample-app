@@ -20,6 +20,10 @@ resource "aws_service_discovery_service" "ui" {
   health_check_custom_config {
     failure_threshold = 1
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_service_discovery_service" "checkout" {
@@ -36,6 +40,10 @@ resource "aws_service_discovery_service" "checkout" {
 
   health_check_custom_config {
     failure_threshold = 1
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -54,6 +62,10 @@ resource "aws_service_discovery_service" "catalog" {
   health_check_custom_config {
     failure_threshold = 1
   }
+
+  lifecycle {
+    create_before_re_destroy = true
+  }
 }
 
 resource "aws_service_discovery_service" "cart" {
@@ -70,6 +82,10 @@ resource "aws_service_discovery_service" "cart" {
 
   health_check_custom_config {
     failure_threshold = 1
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -88,6 +104,10 @@ resource "aws_service_discovery_service" "orders" {
   health_check_custom_config {
     failure_threshold = 1
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_ecs_service" "checkout" {
@@ -98,12 +118,20 @@ resource "aws_ecs_service" "checkout" {
   launch_type     = "FARGATE"
 
   network_configuration {
-       security_groups = [aws_security_group.checkout.id]
+    security_groups = [aws_security_group.checkout.id]
     subnets         = var.subnet_ids
   }
 
   service_registries {
     registry_arn = aws_service_discovery_service.checkout.arn
+  }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      task_definition,
+      desired_count
+    ]
   }
 
   tags = var.tags
@@ -125,6 +153,14 @@ resource "aws_ecs_service" "catalog" {
     registry_arn = aws_service_discovery_service.catalog.arn
   }
 
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      task_definition,
+      desired_count
+    ]
+  }
+
   tags = var.tags
 }
 
@@ -144,6 +180,14 @@ resource "aws_ecs_service" "cart" {
     registry_arn = aws_service_discovery_service.cart.arn
   }
 
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      task_definition,
+      desired_count
+    ]
+  }
+
   tags = var.tags
 }
 
@@ -161,6 +205,14 @@ resource "aws_ecs_service" "orders" {
 
   service_registries {
     registry_arn = aws_service_discovery_service.orders.arn
+  }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      task_definition,
+      desired_count
+    ]
   }
 
   tags = var.tags
@@ -186,6 +238,14 @@ resource "aws_ecs_service" "ui" {
     target_group_arn = module.alb.target_group_arns[0]
     container_name   = "application"
     container_port   = 8080
+  }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      task_definition,
+      desired_count
+    ]
   }
 
   tags = var.tags
