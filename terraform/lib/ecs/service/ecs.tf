@@ -1,18 +1,18 @@
 locals {
   # Environment and secrets transformation
-  environment_list = coalesce(var.environment_variables, {}) != {} ? [
+  environment_list = [
     for name, value in var.environment_variables : {
       name  = name
-      value = try(jsonencode(value), tostring(value))
+      value = try(tostring(value), jsonencode(value), "")
     }
-  ] : []
+  ]
 
-  secrets_list = coalesce(var.secrets, {}) != {} ? [
+  secrets_list = [
     for name, value in var.secrets : {
       name      = name
       valueFrom = value
     }
-  ] : []
+  ]
 
   # Datadog container definition
   datadog_container = var.enable_datadog ? {
@@ -65,7 +65,7 @@ locals {
     portMappings = [
       {
         containerPort = 8126
-        hostPort         = 8126
+        hostPort      = 8126
         protocol      = "tcp"
       }
     ]
@@ -81,7 +81,6 @@ locals {
   } : null
 }
 
-    
 
 
 data "aws_region" "current" {}
