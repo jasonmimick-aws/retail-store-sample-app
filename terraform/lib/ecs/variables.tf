@@ -196,3 +196,10 @@ variable "secrets" {
   }))
 }
 
+variable "service_name" {
+  description = "Name of the service for Datadog monitoring"
+  type        = string
+  default     = "retail-store-ecs"
+}
+
+
