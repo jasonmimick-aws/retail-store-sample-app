@@ -1,4 +1,20 @@
 locals {
+  # Environment and secrets transformation
+  environment_list = [
+    for k, v in var.environment_variables : {
+      name  = k
+      value = tostring(v)
+    }
+  ]
+
+  secrets_list = [
+    for k, v in var.secrets : {
+      name      = k
+      valueFrom = v
+    }
+  ]
+
+  # Datadog container definition
   datadog_container = var.enable_datadog ? {
     name      = "datadog-agent"
     image     = var.datadog_agent_image
@@ -85,8 +101,8 @@ resource "aws_ecs_task_definition" "this" {
         essential = true
         networkMode = "awsvpc"
         readonlyRootFilesystem = false
-        environment = var.environment_variables
-        secrets    = var.secrets
+        environment = local.environment_list
+        secrets    = local.secrets_list
         cpu       = 0
         mountPoints = []
         volumesFrom = []
