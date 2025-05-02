@@ -178,3 +178,21 @@ variable "datadog_env" {
   default     = "prod"
 }
 
+variable "environment_variables" {
+  description = "List of environment variables for the ECS task"
+  default     = []
+  type = list(object({
+    name  = string
+    value = string
+  }))
+}
+
+variable "secrets" {
+  description = "List of secrets for the ECS task"
+  default     = []
+  type = list(object({
+    name      = string
+    valueFrom = string
+  }))
+}
+
