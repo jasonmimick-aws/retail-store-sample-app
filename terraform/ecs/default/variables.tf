@@ -73,3 +73,9 @@ variable "datadog_env" {
   type        = string
   default     = "prod"
 }
+
+variable "account_id" {
+  description = "AWS Account ID"
+  type        = string
+  default     = "607221907875"
+}
