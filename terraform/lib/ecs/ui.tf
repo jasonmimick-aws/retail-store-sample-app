@@ -3,15 +3,15 @@ module "ui" {
 
   environment_name                = var.environment_name
   service_name                    = "ui"
-  cluster_arn                     = aws_ecs_cluster.this.arn
+  cluster_arn                     = aws_ecs_cluster.cluster.arn
   vpc_id                          = var.vpc_id
   subnet_ids                      = var.subnet_ids
   tags                            = var.tags
   container_image                 = module.container_images.result.ui.url
   service_discovery_namespace_arn = aws_service_discovery_private_dns_namespace.this.arn
-  cloudwatch_logs_group_id        = var.cloudwatch_logs_enabled ? aws_cloudwatch_log_group.retail_store[0].id : null
+  cloudwatch_logs_group_id        = var.cloudwatch_logs_enabled ? aws_cloudwatch_log_group.ecs_tasks.id : null
   healthcheck_path                = "/actuator/health"
-  alb_target_group_arn            = aws_lb_target_group.ui.arn
+  alb_target_group_arn            = module.alb.target_group_arns[0]
 
   environment_variables = {
     RETAIL_UI_ENDPOINTS_CARTS = "http://carts.retailstore.local"
@@ -50,9 +50,9 @@ module "ui_service" {
   tags                            = var.tags
   container_image                 = module.container_images.result.ui.url
   service_discovery_namespace_arn = aws_service_discovery_private_dns_namespace.this.arn
-  cloudwatch_logs_group_id        = var.cloudwatch_logs_enabled ? aws_cloudwatch_log_group.retail_store[0].id : null
+  cloudwatch_logs_group_id        = var.cloudwatch_logs_enabled ? aws_cloudwatch_log_group.ecs_tasks.id : null
   healthcheck_path                = "/actuator/health"
-  alb_target_group_arn            = element(module.alb.target_group_arns, 0)
+  alb_target_group_arn            = module.alb.target_group_arns[0]
 
   environment_variables = merge(
     local.default_container_environment,
