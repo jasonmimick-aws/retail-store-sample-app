@@ -13,6 +13,13 @@ resource "aws_ecs_task_definition" "checkout" {
         name      = "application"
         image     = module.container_images.result.checkout.url
         essential = true
+        portMappings = [
+          {
+            containerPort = 8080
+            hostPort      = 8080
+            protocol      = "tcp"
+          }
+        ]
         logConfiguration = {
           logDriver = "awslogs"
           options = {
@@ -54,6 +61,13 @@ resource "aws_ecs_task_definition" "catalog" {
         name      = "application"
         image     = module.container_images.result.catalog.url
         essential = true
+        portMappings = [
+          {
+            containerPort = 8080
+            hostPort      = 8080
+            protocol      = "tcp"
+          }
+        ]
         logConfiguration = {
           logDriver = "awslogs"
           options = {
@@ -103,6 +117,13 @@ resource "aws_ecs_task_definition" "cart" {
         name      = "application"
         image     = module.container_images.result.cart.url
         essential = true
+        portMappings = [
+          {
+            containerPort = 8080
+            hostPort      = 8080
+            protocol      = "tcp"
+          }
+        ]
         logConfiguration = {
           logDriver = "awslogs"
           options = {
@@ -144,6 +165,13 @@ resource "aws_ecs_task_definition" "orders" {
         name      = "application"
         image     = module.container_images.result.orders.url
         essential = true
+        portMappings = [
+          {
+            containerPort = 8080
+            hostPort      = 8080
+            protocol      = "tcp"
+          }
+        ]
         logConfiguration = {
           logDriver = "awslogs"
           options = {
@@ -197,6 +225,13 @@ resource "aws_ecs_task_definition" "ui" {
         name      = "application"
         image     = module.container_images.result.ui.url
         essential = true
+        portMappings = [
+          {
+            containerPort = 8080
+            hostPort      = 8080
+            protocol      = "tcp"
+          }
+        ]
         logConfiguration = {
           logDriver = "awslogs"
           options = {
@@ -216,4 +251,3 @@ resource "aws_ecs_task_definition" "ui" {
     var.enable_datadog ? [local.datadog_container_definition] : []
   ))
 }
-
