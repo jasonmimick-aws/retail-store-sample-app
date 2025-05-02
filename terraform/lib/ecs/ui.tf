@@ -1,5 +1,5 @@
 module "ui" {
-  source = "../../../modules/ecs-service"
+  source = "../ecs-service"
 
   name = "ui"
 
@@ -37,7 +37,7 @@ module "ui" {
 }
 
 module "ui_service" {
-  source = "../../../modules/ecs-service"
+  source = "../ecs-service"
 
   environment_name                = var.environment_name
   service_name                    = "ui"
