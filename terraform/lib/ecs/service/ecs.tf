@@ -11,39 +11,39 @@ locals {
     "name" : k,
     "valueFrom" : v
   }])
-
+  
   # Add Datadog environment variables if enabled
   datadog_env_vars = var.enable_datadog ? jsonencode([
     {
-      "name" : "DD_AGENT_HOST",
-      "value" : "*********"
+      "name": "DD_AGENT_HOST",
+      "value": "*********"
     },
     {
-      "name" : "DD_TRACE_AGENT_PORT",
-      "value" : "8126"
+      "name": "DD_TRACE_AGENT_PORT",
+      "value": "8126"
     },
     {
-      "name" : "DD_SERVICE_NAME",
-      "value" : "${var.service_name}"
+      "name": "DD_SERVICE_NAME",
+      "value": "${var.service_name}"
     },
     {
-      "name" : "DD_ENV",
-      "value" : "${var.environment_name}"
+      "name": "DD_ENV",
+      "value": "${var.environment_name}"
     },
     {
-      "name" : "DD_LOGS_INJECTION",
-      "value" : "true"
+      "name": "DD_LOGS_INJECTION",
+      "value": "true"
     },
     {
-      "name" : "DD_PROFILING_ENABLED",
-      "value" : "true"
+      "name": "DD_PROFILING_ENABLED",
+      "value": "true"
     }
   ]) : "[]"
   # FireLens container definition
   firelens_container = {
     essential = true
-    image     = "amazon/aws-for-fluent-bit:stable"
-    name      = "log_router"
+    image = "amazon/aws-for-fluent-bit:stable"
+    name = "log_router"
     firelensConfiguration = {
       type = "fluentbit"
       options = {
@@ -53,8 +53,8 @@ locals {
     logConfiguration = {
       logDriver = "awslogs"
       options = {
-        "awslogs-group"         = var.cloudwatch_logs_group_id
-        "awslogs-region"        = data.aws_region.current.name
+        "awslogs-group" = var.cloudwatch_logs_group_id
+        "awslogs-region" = data.aws_region.current.name
         "awslogs-stream-prefix" = "firelens"
       }
     }
@@ -65,72 +65,72 @@ locals {
 data "aws_region" "current" {}
 
 resource "aws_ecs_task_definition" "this" {
-  family = "${var.environment_name}-${var.service_name}"
-  container_definitions = jsonencode([
+  family                   = "${var.environment_name}-${var.service_name}"
+  container_definitions    = jsonencode([
     {
-      name      = "application"
-      image     = var.container_image
-      essential = true
-      portMappings = [
+      name                 = "application"
+      image                = var.container_image
+      essential            = true
+      portMappings         = [
         {
-          containerPort = 8080
-          hostPort      = 8080
-          protocol      = "tcp"
-          name          = "application"
+          containerPort    = 8080
+          hostPort         = 8080
+          protocol         = "tcp"
+          name             = "application"
         }
       ]
-      environment = jsondecode(local.environment)
-      secrets     = jsondecode(local.secrets)
-      cpu         = 0
-      mountPoints = []
-      volumesFrom = []
-      healthCheck = {
-        command     = ["CMD-SHELL", "curl -f http://localhost:8080${var.healthcheck_path} || exit 1"]
-        interval    = 10
-        startPeriod = 60
-        retries     = 3
-        timeout     = 5
+      environment          = jsondecode(local.environment)
+      secrets              = jsondecode(local.secrets)
+      cpu                  = 0
+      mountPoints          = []
+      volumesFrom          = []
+      healthCheck          = {
+        command           = [ "CMD-SHELL", "curl -f http://localhost:8080${var.healthcheck_path} || exit 1" ]
+        interval          = 10
+        startPeriod       = 60
+        retries           = 3
+        timeout           = 5
       }
-      logConfiguration = {
-        logDriver = "awsfirelens"
-        options = {
-          Name       = "datadog"
-          Host       = "http-intake.logs.datadoghq.com"
-          TLS        = "on"
-          dd_service = var.service_name
-          dd_source  = "ecs"
-          dd_tags    = "env:${var.environment_name},service:${var.service_name}"
-          provider   = "ecs"
+      logConfiguration     = {
+        logDriver          = "awsfirelens"
+        options            = {
+          Name             = "datadog"
+          Host             = "http-intake.logs.datadoghq.com"
+          TLS              = "on"
+          dd_service       = var.service_name
+          dd_source        = "ecs"
+          dd_tags          = "env:${var.environment_name},service:${var.service_name}"
+          provider         = "ecs"
         }
-        secretOptions = [
+        secretOptions      = [
           {
-            name      = "apikey"
-            valueFrom = var.datadog_api_key_arn
+            name           = "apikey"
+            valueFrom      = var.datadog_api_key_arn
           }
         ]
       }
-      dependsOn = var.enable_datadog ? [
+      dependsOn            = var.enable_datadog ? [
         {
-          containerName = "datadog-agent"
-          condition     = "START"
+          containerName    = "datadog-agent"
+          condition        = "START"
         },
         {
-          containerName = "log_router"
-          condition     = "START"
+          containerName    = "log_router"
+          condition        = "START"
         }
-        ] : [
+      ] : [
         {
-          containerName = "log_router"
-          condition     = "START"
+          containerName    = "log_router"
+          condition        = "START"
         }
       ]
     },
     local.firelens_container,
     var.enable_datadog ? {
-      name      = "datadog-agent"
-      image     = "public.ecr.aws/datadog/agent:latest"
-      essential = true
-      environment = [
+      name                = "datadog-agent"
+      image               = "public.ecr.aws/datadog/agent:latest"
+      essential           = true
+      environment         = [
         { name = "DD_SITE", value = "datadoghq.com" },
         { name = "DD_ECS_FARGATE", value = "true" },
         { name = "DD_APM_ENABLED", value = "true" },
@@ -142,40 +142,40 @@ resource "aws_ecs_task_definition" "this" {
         { name = "DD_ECS_TASK_COLLECTION_ENABLED", value = "true" },
         { name = "DD_PROCESS_AGENT_ENABLED", value = "true" }
       ]
-      secrets = [
+      secrets             = [
         { name = "DD_API_KEY", valueFrom = var.datadog_api_key_arn }
       ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = var.cloudwatch_logs_group_id
-          awslogs-region        = data.aws_region.current.name
+      logConfiguration    = {
+        logDriver         = "awslogs"
+        options           = {
+          awslogs-group   = var.cloudwatch_logs_group_id
+          awslogs-region  = data.aws_region.current.name
           awslogs-stream-prefix = "${var.service_name}-datadog-agent"
         }
       }
-      portMappings = [
+      portMappings        = [
         {
-          containerPort = 8126
-          hostPort      = 8126
+          containerPort   = 8126
+          hostPort       = 8126
           protocol      = "tcp"
         }
       ]
     } : null
   ])
   requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc"
-  cpu                      = "1024"
-  memory                   = "2048"
-  execution_role_arn       = aws_iam_role.task_execution_role.arn
-  task_role_arn            = aws_iam_role.task_role.arn
+  network_mode            = "awsvpc"
+  cpu                     = "1024"
+  memory                  = "2048"
+  execution_role_arn      = aws_iam_role.task_execution_role.arn
+  task_role_arn           = aws_iam_role.task_role.arn
 }
 
 resource "aws_ecs_service" "this" {
-  name            = var.service_name
-  cluster         = var.cluster_arn
-  task_definition = aws_ecs_task_definition.this.arn
-  desired_count   = 1
-
+  name                   = var.service_name
+  cluster                = var.cluster_arn
+  task_definition        = aws_ecs_task_definition.this.arn
+  desired_count          = 1
+  
   timeouts {
     create = "40m"
   }
